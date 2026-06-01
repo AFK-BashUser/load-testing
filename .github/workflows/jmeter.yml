@@ -1,0 +1,51 @@
+name: JMeter Load Test
+
+on:
+  workflow_dispatch:
+    inputs:
+      threads:
+        description: 'Number of Users'
+        required: true
+        default: '15000'
+      rampup:
+        description: 'Ramp-up Period (seconds)'
+        required: true
+        default: '450'
+      duration:
+        description: 'Duration (seconds)'
+        required: true
+        default: '450'
+
+jobs:
+  jmeter:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Install Java
+      uses: actions/setup-java@v3
+      with:
+        java-version: '11'
+        distribution: 'temurin'
+    
+    - name: Download JMeter
+      run: |
+        wget https://archive.apache.org/dist/jmeter/binaries/apache-jmeter-5.6.3.tgz
+        tar -xzf apache-jmeter-5.6.3.tgz
+    
+    - name: Run JMeter Test
+      run: |
+        apache-jmeter-5.6.3/bin/jmeter \
+          -n \
+          -t CareerHelper_Complete_165APIs.jmx \
+          -l results.csv \
+          -Jthreads=${{ github.event.inputs.threads }} \
+          -Jrampup=${{ github.event.inputs.rampup }} \
+          -Jduration=${{ github.event.inputs.duration }}
+    
+    - name: Upload Results
+      uses: actions/upload-artifact@v3
+      with:
+        name: jmeter-results
+        path: results.csv
