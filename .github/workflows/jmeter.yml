@@ -36,6 +36,7 @@ jobs:
     
     - name: Run JMeter Test
       run: |
+        export HEAP="-Xms2g -Xmx4g"
         apache-jmeter-5.6.3/bin/jmeter \
           -n \
           -t CareerHelper_Complete_165APIs.jmx \
