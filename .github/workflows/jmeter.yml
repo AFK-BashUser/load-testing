@@ -40,9 +40,9 @@ jobs:
           -n \
           -t CareerHelper_Complete_165APIs.jmx \
           -l results.csv \
-          -Jthreads=${{ github.event.inputs.threads }} \
-          -Jrampup=${{ github.event.inputs.rampup }} \
-          -Jduration=${{ github.event.inputs.duration }}
+          -JNUM_USERS=${{ github.event.inputs.threads }} \
+          -JRAMP_UP=${{ github.event.inputs.rampup }} \
+          -JDURATION=${{ github.event.inputs.duration }}
     
     - name: Upload Results
       uses: actions/upload-artifact@v3
