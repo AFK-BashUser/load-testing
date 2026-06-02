@@ -6,15 +6,15 @@ on:
       threads:
         description: 'Number of Users'
         required: true
-        default: '15000'
+        default: '10000'
       rampup:
         description: 'Ramp-up Period (seconds)'
         required: true
-        default: '450'
+        default: '300'
       duration:
         description: 'Duration (seconds)'
         required: true
-        default: '450'
+        default: '300'
 
 jobs:
   jmeter:
@@ -22,21 +22,25 @@ jobs:
     
     steps:
     - uses: actions/checkout@v3
-    
-    - name: Install Java
+
+    - name: Install Java with more memory
       uses: actions/setup-java@v3
       with:
         java-version: '11'
         distribution: 'temurin'
-    
+
+    - name: Set JVM Options
+      run: |
+        echo "JVM_ARGS=-Xms2g -Xmx5g" >> $GITHUB_ENV
+
     - name: Download JMeter
       run: |
         wget https://archive.apache.org/dist/jmeter/binaries/apache-jmeter-5.6.3.tgz
         tar -xzf apache-jmeter-5.6.3.tgz
-    
+
     - name: Run JMeter Test
       run: |
-        export HEAP="-Xms2g -Xmx4g"
+        export HEAP="-Xms2g -Xmx5g"
         apache-jmeter-5.6.3/bin/jmeter \
           -n \
           -t CareerHelper_Complete_165APIs.jmx \
@@ -44,7 +48,7 @@ jobs:
           -JNUM_USERS=${{ github.event.inputs.threads }} \
           -JRAMP_UP=${{ github.event.inputs.rampup }} \
           -JDURATION=${{ github.event.inputs.duration }}
-    
+
     - name: Upload Results
       uses: actions/upload-artifact@v4
       with:
